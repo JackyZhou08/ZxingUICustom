@@ -46,7 +46,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
@@ -83,7 +82,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
   private static final String TAG = CaptureActivity.class.getSimpleName();
 
   private static final long DEFAULT_INTENT_RESULT_DURATION_MS = 1500L;
-  private static final long BULK_MODE_SCAN_DELAY_MS = 1000L;
 
   private static final String[] ZXING_URLS = { "http://zxing.appspot.com/scan", "zxing://scan/" };
 
@@ -140,7 +138,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     beepManager = new BeepManager(this);
     ambientLightManager = new AmbientLightManager(this);
 
-    PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
     // TODO: 2018/8/19 第三步
     if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -192,8 +189,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     Intent intent = getIntent();
 
-    copyToClipboard = prefs.getBoolean(PreferencesActivity.KEY_COPY_TO_CLIPBOARD, true)
-        && (intent == null || intent.getBooleanExtra(Intents.Scan.SAVE_HISTORY, true));
+    copyToClipboard = false;
 
     source = IntentSource.NONE;
     sourceUrl = null;
@@ -380,8 +376,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         startActivityForResult(intent, HISTORY_REQUEST_CODE);
         break;
       case R.id.menu_settings:
-        intent.setClassName(this, PreferencesActivity.class.getName());
-        startActivity(intent);
         break;
       case R.id.menu_help:
         intent.setClassName(this, HelpActivity.class.getName());
@@ -474,17 +468,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         }
         break;
       case NONE:
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (fromLiveScan && prefs.getBoolean(PreferencesActivity.KEY_BULK_MODE, false)) {
-          Toast.makeText(getApplicationContext(),
-                         getResources().getString(R.string.msg_bulk_mode_scanned) + " (" + rawResult.getText() + ')',
-                         Toast.LENGTH_SHORT).show();
-          maybeSetClipboard(resultHandler);
-          // Wait a moment or else it will scan the same barcode continuously about 3 times
-          restartPreviewAfterDelay(BULK_MODE_SCAN_DELAY_MS);
-        } else {
+
           handleDecodeInternally(rawResult, resultHandler, barcode);
-        }
+
         break;
     }
   }
@@ -537,12 +523,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     maybeSetClipboard(resultHandler);
 
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-    if (resultHandler.getDefaultButtonID() != null && prefs.getBoolean(PreferencesActivity.KEY_AUTO_OPEN_WEB, false)) {
-      resultHandler.handleButtonPress(resultHandler.getDefaultButtonID());
-      return;
-    }
 
     statusView.setVisibility(View.GONE);
     viewfinderView.setVisibility(View.GONE);
@@ -596,14 +576,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     TextView supplementTextView = (TextView) findViewById(R.id.contents_supplement_text_view);
     supplementTextView.setText("");
     supplementTextView.setOnClickListener(null);
-    if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
-        PreferencesActivity.KEY_SUPPLEMENTAL, true)) {
-      SupplementalInfoRetriever.maybeInvokeRetrieval(supplementTextView,
-                                                     resultHandler.getResult(),
-                                                     historyManager,
-                                                     this);
-    }
-
+    SupplementalInfoRetriever.maybeInvokeRetrieval(supplementTextView,
+            resultHandler.getResult(),
+            historyManager,
+            this);
     int buttonCount = resultHandler.getButtonCount();
     ViewGroup buttonView = (ViewGroup) findViewById(R.id.result_button_view);
     buttonView.requestFocus();

@@ -16,14 +16,15 @@
 
 package com.google.zxing.client.android;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.DecodeHintType;
-import com.google.zxing.ResultPointCallback;
-
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.DecodeHintType;
+import com.google.zxing.ResultPointCallback;
+import com.google.zxing.client.android.jacky.Setting;
 
 import java.util.Collection;
 import java.util.EnumMap;
@@ -64,22 +65,22 @@ final class DecodeThread extends Thread {
     if (decodeFormats == null || decodeFormats.isEmpty()) {
       SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
       decodeFormats = EnumSet.noneOf(BarcodeFormat.class);
-      if (prefs.getBoolean(PreferencesActivity.KEY_DECODE_1D_PRODUCT, true)) {
+      if (Setting.IS_SUPPORT_DECODE_1D_PRODUCT) {
         decodeFormats.addAll(DecodeFormatManager.PRODUCT_FORMATS);
       }
-      if (prefs.getBoolean(PreferencesActivity.KEY_DECODE_1D_INDUSTRIAL, true)) {
+      if (Setting.IS_SUPPORT_DECODE_1D_INDUSTRIAL) {
         decodeFormats.addAll(DecodeFormatManager.INDUSTRIAL_FORMATS);
       }
-      if (prefs.getBoolean(PreferencesActivity.KEY_DECODE_QR, true)) {
+      if (Setting.IS_SUPPORT_DECODE_QR) {
         decodeFormats.addAll(DecodeFormatManager.QR_CODE_FORMATS);
       }
-      if (prefs.getBoolean(PreferencesActivity.KEY_DECODE_DATA_MATRIX, true)) {
+      if (Setting.IS_SUPPORT_DECODE_DATA_MATRIX) {
         decodeFormats.addAll(DecodeFormatManager.DATA_MATRIX_FORMATS);
       }
-      if (prefs.getBoolean(PreferencesActivity.KEY_DECODE_AZTEC, false)) {
+      if (Setting.IS_SUPPORT_DECODE_AZTEC) {
         decodeFormats.addAll(DecodeFormatManager.AZTEC_FORMATS);
       }
-      if (prefs.getBoolean(PreferencesActivity.KEY_DECODE_PDF417, false)) {
+      if (Setting.IS_SUPPORT_DECODE_PDF417) {
         decodeFormats.addAll(DecodeFormatManager.PDF417_FORMATS);
       }
     }

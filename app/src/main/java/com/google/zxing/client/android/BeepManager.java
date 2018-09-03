@@ -26,6 +26,8 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.zxing.client.android.jacky.Setting;
+
 import java.io.Closeable;
 import java.io.IOException;
 
@@ -52,8 +54,8 @@ final class BeepManager implements MediaPlayer.OnErrorListener, Closeable {
 
   synchronized void updatePrefs() {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-    playBeep = shouldBeep(prefs, activity);
-    vibrate = prefs.getBoolean(PreferencesActivity.KEY_VIBRATE, false);
+    playBeep = shouldBeep(activity);
+    vibrate = Setting.IS_VIBRATE;
     if (playBeep && mediaPlayer == null) {
       // The volume on STREAM_SYSTEM is not adjustable, and users found it too loud,
       // so we now play on the music stream.
@@ -72,14 +74,12 @@ final class BeepManager implements MediaPlayer.OnErrorListener, Closeable {
     }
   }
 
-  private static boolean shouldBeep(SharedPreferences prefs, Context activity) {
-    boolean shouldPlayBeep = prefs.getBoolean(PreferencesActivity.KEY_PLAY_BEEP, true);
-    if (shouldPlayBeep) {
-      // See if sound settings overrides this
-      AudioManager audioService = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
-      if (audioService.getRingerMode() != AudioManager.RINGER_MODE_NORMAL) {
-        shouldPlayBeep = false;
-      }
+  private static boolean shouldBeep( Context activity) {
+    boolean shouldPlayBeep = Setting.IS_PLAY_BEEP;
+    // See if sound settings overrides this
+    AudioManager audioService = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
+    if (audioService.getRingerMode() != AudioManager.RINGER_MODE_NORMAL) {
+      shouldPlayBeep = false;
     }
     return shouldPlayBeep;
   }
