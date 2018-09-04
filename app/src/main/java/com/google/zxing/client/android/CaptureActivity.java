@@ -20,7 +20,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -106,12 +105,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         ambientLightManager = new AmbientLightManager(this);
 
 
-        // TODO: 2018/8/19 第三步
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        }
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     @Override
@@ -268,6 +262,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         ResultHandler resultHandler = ResultHandlerFactory.makeResultHandler(this, rawResult);
         viewfinderView.setVisibility(View.GONE);
         Toast.makeText(this,resultHandler.getDisplayContents(),Toast.LENGTH_SHORT).show();
+
+        restartPreviewAfterDelay(5000L);
     }
 
 

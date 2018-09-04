@@ -16,8 +16,6 @@
 
 package com.google.zxing.client.android.camera;
 
-import android.content.SharedPreferences;
-
 import com.google.zxing.client.android.jacky.Setting;
 
 /**
@@ -36,7 +34,7 @@ public enum FrontLightMode {
     return modeString == null ? OFF : valueOf(modeString);
   }
 
-  public static FrontLightMode readPref(SharedPreferences sharedPrefs) {
+  public static FrontLightMode readFrontLightMode() {
     return parse(Setting.FRONT_LIGHT_MODE);
   }
 

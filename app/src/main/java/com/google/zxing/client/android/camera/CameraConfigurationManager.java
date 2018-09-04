@@ -17,10 +17,8 @@
 package com.google.zxing.client.android.camera;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.hardware.Camera;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
@@ -154,9 +152,7 @@ final class CameraConfigurationManager {
       Log.w(TAG, "In camera config safe mode -- most settings will not be honored");
     }
 
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
-    initializeTorch(parameters, prefs, safeMode);
+    initializeTorch(parameters, safeMode);
 
     CameraConfigurationUtils.setFocus(
         parameters,
@@ -228,8 +224,8 @@ final class CameraConfigurationManager {
     camera.setParameters(parameters);
   }
 
-  private void initializeTorch(Camera.Parameters parameters, SharedPreferences prefs, boolean safeMode) {
-    boolean currentSetting = FrontLightMode.readPref(prefs) == FrontLightMode.ON;
+  private void initializeTorch(Camera.Parameters parameters, boolean safeMode) {
+    boolean currentSetting = FrontLightMode.readFrontLightMode() == FrontLightMode.ON;
     doSetTorch(parameters, currentSetting, safeMode);
   }
 
