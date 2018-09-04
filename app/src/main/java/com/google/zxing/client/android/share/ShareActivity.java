@@ -16,13 +16,6 @@
 
 package com.google.zxing.client.android.share;
 
-import android.os.Build;
-import android.provider.ContactsContract;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.client.android.Contents;
-import com.google.zxing.client.android.Intents;
-import com.google.zxing.client.android.R;
-
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -30,10 +23,15 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.provider.ContactsContract;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
-import com.google.zxing.client.android.clipboard.ClipboardInterface;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.client.android.Contents;
+import com.google.zxing.client.android.Intents;
+import com.google.zxing.client.android.R;
 
 /**
  * Barcode Scanner can share data like contacts and bookmarks by displaying a QR Code on screen,
@@ -49,7 +47,6 @@ public final class ShareActivity extends Activity {
   private static final int PICK_CONTACT = 1;
   private static final int PICK_APP = 2;
 
-  private View clipboardButton;
 
   private final View.OnClickListener contactListener = new View.OnClickListener() {
     @Override
@@ -57,37 +54,6 @@ public final class ShareActivity extends Activity {
       Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
       intent.addFlags(Intents.FLAG_NEW_DOC);
       startActivityForResult(intent, PICK_CONTACT);
-    }
-  };
-
-  private final View.OnClickListener bookmarkListener = new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-      Intent intent = new Intent(Intent.ACTION_PICK);
-      intent.addFlags(Intents.FLAG_NEW_DOC);
-      intent.setClassName(ShareActivity.this, BookmarkPickerActivity.class.getName());
-      startActivityForResult(intent, PICK_BOOKMARK);
-    }
-  };
-
-  private final View.OnClickListener appListener = new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-      Intent intent = new Intent(Intent.ACTION_PICK);
-      intent.addFlags(Intents.FLAG_NEW_DOC);
-      intent.setClassName(ShareActivity.this, AppPickerActivity.class.getName());
-      startActivityForResult(intent, PICK_APP);
-    }
-  };
-
-  private final View.OnClickListener clipboardListener = new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-      // Should always be true, because we grey out the clipboard button in onResume() if it's empty
-      CharSequence text = ClipboardInterface.getText(ShareActivity.this);
-      if (text != null) {
-        launchSearch(text.toString());
-      }
     }
   };
 
@@ -119,23 +85,12 @@ public final class ShareActivity extends Activity {
     super.onCreate(icicle);
     setContentView(R.layout.share);
 
-    findViewById(R.id.share_contact_button).setOnClickListener(contactListener);
-    if (Build.VERSION.SDK_INT >= 23) { // Marshmallow / 6.0
-      // Can't access bookmarks in 6.0+
-      findViewById(R.id.share_bookmark_button).setEnabled(false);
-    } else {
-      findViewById(R.id.share_bookmark_button).setOnClickListener(bookmarkListener);
-    }
-    findViewById(R.id.share_app_button).setOnClickListener(appListener);
-    clipboardButton = findViewById(R.id.share_clipboard_button);
-    clipboardButton.setOnClickListener(clipboardListener);
     findViewById(R.id.share_text_view).setOnKeyListener(textListener);
   }
 
   @Override
   protected void onResume() {
     super.onResume();
-    clipboardButton.setEnabled(ClipboardInterface.hasText(this));
   }
 
   @Override

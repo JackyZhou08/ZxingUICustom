@@ -168,7 +168,7 @@ public final class CameraManager {
 
   /**
    * Convenience method for {@link com.google.zxing.client.android.CaptureActivity}
-   *
+   * 开启闪光灯
    * @param newSetting if {@code true}, light should be turned on if currently off. And vice versa.
    */
   public synchronized void setTorch(boolean newSetting) {
