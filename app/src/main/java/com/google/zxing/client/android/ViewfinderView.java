@@ -65,10 +65,10 @@ public final class ViewfinderView extends View {
     // Initialize these once for performance rather than calling them every time in onDraw().
     paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     Resources resources = getResources();
-    maskColor = resources.getColor(R.color.viewfinder_mask);
+    maskColor = resources.getColor(R.color.viewfinder_mask);//外面蒙层的颜色
     resultColor = resources.getColor(R.color.result_view);
-    laserColor = resources.getColor(R.color.viewfinder_laser);
-    resultPointColor = resources.getColor(R.color.possible_result_points);
+    laserColor = resources.getColor(R.color.viewfinder_laser);//中间跳动的红色线的颜色
+    resultPointColor = resources.getColor(R.color.possible_result_points);//跳动的黄色点的颜色
     scannerAlpha = 0;
     possibleResultPoints = new ArrayList<>(5);
     lastPossibleResultPoints = null;
@@ -94,6 +94,7 @@ public final class ViewfinderView extends View {
     int width = canvas.getWidth();
     int height = canvas.getHeight();
 
+    //画外面的蒙层
     // Draw the exterior (i.e. outside the framing rect) darkened
     paint.setColor(resultBitmap != null ? resultColor : maskColor);
     canvas.drawRect(0, 0, width, frame.top, paint);
@@ -101,6 +102,7 @@ public final class ViewfinderView extends View {
     canvas.drawRect(frame.right + 1, frame.top, width, frame.bottom + 1, paint);
     canvas.drawRect(0, frame.bottom + 1, width, height, paint);
 
+    //画绿色的线
     paint.setColor(Color.GREEN);
     paint.setStrokeWidth(5L);
     canvas.drawLine(frame.left,frame.top,frame.right,frame.top,paint);

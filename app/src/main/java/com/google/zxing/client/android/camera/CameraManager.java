@@ -315,6 +315,8 @@ public final class CameraManager {
   }
 
   /**
+   *
+   * 设置解码的区域,可以扩大到全屏
    * A factory method to build the appropriate LuminanceSource object based on the format
    * of the preview buffers, as described by Camera.Parameters.
    *
