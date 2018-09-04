@@ -16,18 +16,19 @@
 
 package com.google.zxing.client.android;
 
-import com.google.zxing.ResultPoint;
-import com.google.zxing.client.android.camera.CameraManager;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.google.zxing.ResultPoint;
+import com.google.zxing.client.android.camera.CameraManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +84,8 @@ public final class ViewfinderView extends View {
     if (cameraManager == null) {
       return; // not ready yet, early draw before done configuring
     }
+
+    //frame和previewFrame是一样的
     Rect frame = cameraManager.getFramingRect();
     Rect previewFrame = cameraManager.getFramingRectInPreview();    
     if (frame == null || previewFrame == null) {
@@ -97,6 +100,13 @@ public final class ViewfinderView extends View {
     canvas.drawRect(0, frame.top, frame.left, frame.bottom + 1, paint);
     canvas.drawRect(frame.right + 1, frame.top, width, frame.bottom + 1, paint);
     canvas.drawRect(0, frame.bottom + 1, width, height, paint);
+
+    paint.setColor(Color.GREEN);
+    paint.setStrokeWidth(5L);
+    canvas.drawLine(frame.left,frame.top,frame.right,frame.top,paint);
+    canvas.drawLine(frame.right,frame.top,frame.right,frame.bottom,paint);
+    canvas.drawLine(frame.right,frame.bottom,frame.left,frame.bottom,paint);
+    canvas.drawLine(frame.left,frame.bottom,frame.left,frame.top,paint);
 
     if (resultBitmap != null) {
       // Draw the opaque result bitmap over the scanning rectangle

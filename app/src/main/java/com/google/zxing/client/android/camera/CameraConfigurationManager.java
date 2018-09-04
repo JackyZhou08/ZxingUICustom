@@ -131,7 +131,7 @@ final class CameraConfigurationManager {
     }
     Log.i(TAG, "Screen resolution in current orientation: " + screenResolutionForCamera);
 
-    cameraResolution = CameraConfigurationUtils.findBestPreviewSizeValue(parameters, screenResolutionForCamera);
+    cameraResolution = CameraConfigurationUtils.findBestPreviewSizeValue(parameters, screenResolutionForCamera);//解决竖屏二维码被拉伸的问题
     Log.i(TAG, "Camera resolution: " + cameraResolution);
     bestPreviewSize = CameraConfigurationUtils.findBestPreviewSizeValue(parameters, screenResolutionForCamera);
     Log.i(TAG, "Best available preview size: " + bestPreviewSize);
