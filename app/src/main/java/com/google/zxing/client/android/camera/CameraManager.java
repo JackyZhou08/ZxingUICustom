@@ -223,6 +223,9 @@ public final class CameraManager {
 
       int width = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
       int height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
+      //设置扫描框的宽和高是一样大
+      width=width<height?height:width;
+      height=width<height?height:width;
 
       int leftOffset = (screenResolution.x - width) / 2;
       int topOffset = (screenResolution.y - height) / 2;

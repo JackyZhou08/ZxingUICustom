@@ -16,28 +16,28 @@
 
 package com.google.zxing.client.android.encode;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Display;
+import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.FinishListener;
 import com.google.zxing.client.android.Intents;
 import com.google.zxing.client.android.R;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -80,10 +80,7 @@ public final class EncodeActivity extends Activity {
   public boolean onCreateOptionsMenu(Menu menu) {
     MenuInflater menuInflater = getMenuInflater();
     menuInflater.inflate(R.menu.encode, menu);
-    boolean useVcard = qrCodeEncoder != null && qrCodeEncoder.isUseVCard();
-    int encodeNameResource = useVcard ? R.string.menu_encode_mecard : R.string.menu_encode_vcard;
     MenuItem encodeItem = menu.findItem(R.id.menu_encode);
-    encodeItem.setTitle(encodeNameResource);
     Intent intent = getIntent();
     if (intent != null) {
       String type = intent.getStringExtra(Intents.Encode.TYPE);
@@ -97,16 +94,6 @@ public final class EncodeActivity extends Activity {
     switch (item.getItemId()) {
       case R.id.menu_share:
         share();
-        return true;
-      case R.id.menu_encode:
-        Intent intent = getIntent();
-        if (intent == null) {
-          return false;
-        }
-        intent.putExtra(USE_VCARD_KEY, !qrCodeEncoder.isUseVCard());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-        finish();
         return true;
       default:
         return false;
@@ -191,10 +178,9 @@ public final class EncodeActivity extends Activity {
     if (intent == null) {
       return;
     }
-
+    String encodeContent = intent.getStringExtra(Intents.Encode.DATA);
     try {
-      boolean useVCard = intent.getBooleanExtra(USE_VCARD_KEY, false);
-      qrCodeEncoder = new QRCodeEncoder(this, intent, smallerDimension, useVCard);
+      qrCodeEncoder = new QRCodeEncoder(this,smallerDimension,encodeContent);
       Bitmap bitmap = qrCodeEncoder.encodeAsBitmap();
       if (bitmap == null) {
         Log.w(TAG, "Could not encode barcode");
